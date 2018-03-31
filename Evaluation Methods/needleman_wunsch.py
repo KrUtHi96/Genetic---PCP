@@ -84,4 +84,5 @@ def test(a, b):
     print("Final Score : ", score)
     
 if __name__ == "__main__":
+    test("TCGCTTAAGTATGCTTTTAG", "GAACAAAACTCAATAAAATAGAACAAAACTCAATAAAATA")
     test("paper", "coinpaper")

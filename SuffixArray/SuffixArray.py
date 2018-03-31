@@ -1,96 +1,108 @@
-def sort_bucket(s, bucket, order):
-    d = {}
-    for i in bucket:
-        key = s[i:i + order]
+class SuffixArray:
+    def __init__(self, text):
+        self.text = text
+        self.lcp = []
+        self.suffix_array = []
 
-        if key not in d:
-            d[key] = []
+        # Building suffix array and LCP array
+        self._build_suffix_array()
+        self._build_lcp_from_sa()
 
-        d[key].append(i)
+    def _sort_bucket(self, bucket, order):
+        d = {}
+        for i in bucket:
+            key = self.text[i:i + order]
 
-    result = []
-    for k in sorted(d):
-        v = d[k]
-        if len(v) > 1:
-            result += sort_bucket(s, v, order * 2)
-        else:
-            result.append(v[0])
-    return result
+            if key not in d:
+                d[key] = []
 
+            d[key].append(i)
 
-def get_suffix_array(text):
-    return sort_bucket(text, range(len(text)), 1)
+        result = []
+        for k in sorted(d):
+            v = d[k]
+            if len(v) > 1:
+                result += self._sort_bucket(v, order * 2)
+            else:
+                result.append(v[0])
+        return result
 
+    def _build_suffix_array(self):
+        self.suffix_array = self._sort_bucket(range(len(self.text)), 1)
 
-def lcp_from_sa(text, suffix_array):
-    n = len(suffix_array)
+    def _build_lcp_from_sa(self):
+        n = len(self.suffix_array)
 
-    lcp = [0] * n
-    inv_suff = [0] * n
+        self.lcp = [0] * n
+        inv_suff = [0] * n
 
-    for i in range(n):
-        inv_suff[suffix_array[i]] = i
+        for i in range(n):
+            inv_suff[self.suffix_array[i]] = i
 
-    k = 0
-    for i in range(n):
-        if inv_suff[i] == n - 1:
-            k = 0
-            continue
+        k = 0
+        for i in range(n):
+            if inv_suff[i] == n - 1:
+                k = 0
+                continue
 
-        j = suffix_array[inv_suff[i] + 1]
-        while i + k < n and j + k < n and text[i + k] == text[j + k]:
-            k += 1
+            j = self.suffix_array[inv_suff[i] + 1]
+            while i + k < n and j + k < n and self.text[i + k] == self.text[j + k]:
+                k += 1
 
-        lcp[inv_suff[i]] = k
+            self.lcp[inv_suff[i]] = k
 
-        if k > 0:
-            k -= 1
+            if k > 0:
+                k -= 1
 
-    return lcp
+    def get_suffix_array(self):
+        return self.suffix_array
 
+    def get_lcp_array(self):
+        return self.lcp
 
-def search(text, pattern, suffix_array, first_occurence=False, count=False, offset=0):
-    left = 0
-    right = len(suffix_array) - 1
+    def search(self, pattern, first_occurrence=False, count=False, offset=0):
+        left = 0
+        right = len(self.suffix_array) - 1
 
-    occurences = []
+        occurrences = []
 
-    m = len(pattern)
+        m = len(pattern)
 
-    while left <= right:
-        middle = (left + right) // 2
+        while left <= right:
+            middle = (left + right) // 2
 
-        slice = text[suffix_array[middle]: suffix_array[middle] + m]
-        # print(slice)
+            slice = self.text[self.suffix_array[middle]: self.suffix_array[middle] + m]
+            # print(slice)
 
-        if pattern == slice:
-            occurences.append(offset + suffix_array[middle])
-            cur = middle - 1
-            while cur > -1 and text[suffix_array[cur]: suffix_array[cur] + m] == pattern:
-                occurences.append(offset + suffix_array[cur])
-                cur -= 1
+            if pattern == slice:
+                occurrences.append(offset + self.suffix_array[middle])
+                cur = middle - 1
+                while cur > -1 and self.text[self.suffix_array[cur]: self.suffix_array[cur] + m] == pattern:
+                    occurrences.append(offset + self.suffix_array[cur])
+                    cur -= 1
 
-            cur = middle + 1
-            while cur < len(suffix_array) and text[suffix_array[cur]: suffix_array[cur] + m] == pattern:
-                occurences.append(offset + suffix_array[cur])
-                cur += 1
+                cur = middle + 1
+                while cur < len(self.suffix_array) and self.text[
+                                                       self.suffix_array[cur]: self.suffix_array[cur] + m] == pattern:
+                    occurrences.append(offset + self.suffix_array[cur])
+                    cur += 1
 
-            if first_occurence:
-                return min(occurences)
+                if first_occurrence:
+                    return min(occurrences)
 
-            if count:
-                return len(occurences)
+                if count:
+                    return len(occurrences)
 
-            return occurences
-        elif pattern < slice:
-            right = middle - 1
-        else:
-            left = middle + 1
-    return []
+                return occurrences
+            elif pattern < slice:
+                right = middle - 1
+            else:
+                left = middle + 1
+        return []
 
 
 if __name__ == '__main__':
-    text = 'APPLE'
-    pattern = 'PL'
-    suffix_array = get_suffix_array(text)
-    print(search(text, pattern, suffix_array))
+    text = 'CAACTGGACCAACGCCCAAT'
+    pattern = 'CC'
+    suffix_array = SuffixArray(text)
+    print(suffix_array.search(pattern))

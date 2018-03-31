@@ -90,7 +90,7 @@ def search(text, pattern, suffix_array, first_occurence=False, count=False, offs
 
 
 if __name__ == '__main__':
-    text = 'CAACTGGACCAACGCCCAAT'
-    pattern = 'CC'
+    text = 'APPLE'
+    pattern = 'PL'
     suffix_array = get_suffix_array(text)
     print(search(text, pattern, suffix_array))

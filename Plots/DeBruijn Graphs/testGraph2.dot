@@ -1,0 +1,26 @@
+digraph "Graph" {
+  ong_lon [label="ong_lon"] ;
+  ng_long [label="ng_long"] ;
+  long_lo [label="long_lo"] ;
+  _long_t [label="_long_t"] ;
+  long_ti [label="long_ti"] ;
+  _long_l [label="_long_l"] ;
+  ong_tim [label="ong_tim"] ;
+  g_long_ [label="g_long_"] ;
+  a_long_ [label="a_long_"] ;
+  ong_lon -> ng_long [label=""] ;
+  ong_lon -> ng_long [label=""] ;
+  ng_long -> g_long_ [label=""] ;
+  ng_long -> g_long_ [label=""] ;
+  long_lo -> ong_lon [label=""] ;
+  long_lo -> ong_lon [label=""] ;
+  _long_t -> long_ti [label=""] ;
+  long_ti -> ong_tim [label=""] ;
+  _long_l -> long_lo [label=""] ;
+  _long_l -> long_lo [label=""] ;
+  ong_tim -> ng_time [label=""] ;
+  g_long_ -> _long_l [label=""] ;
+  g_long_ -> _long_l [label=""] ;
+  g_long_ -> _long_t [label=""] ;
+  a_long_ -> _long_l [label=""] ;
+}

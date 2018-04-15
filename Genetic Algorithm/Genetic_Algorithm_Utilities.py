@@ -1,6 +1,8 @@
 import random
 
+
 class GeneticAlgorithmUtilities:
+
     
     def __init__(self, reads, overlap_matrix):
         
@@ -25,6 +27,7 @@ class GeneticAlgorithmUtilities:
 
 
     def initialize_population(self, size):
+
         i = 0
         population = {} 
         while i < size:
@@ -42,12 +45,15 @@ class GeneticAlgorithmUtilities:
 
 
     def fitness_score1(self, index_list):
+
         score = 0
         for i in range(len(index_list) - 1):
             score += self.overlap_matrix[index_list[i]][index_list[i + 1]]
         return score
 
+
     def fitness_score2(self, index_list):
+
         score = 0
         for i in range(len(index_list) - 1):
             for j in range(len(index_list) - 1):
@@ -55,7 +61,8 @@ class GeneticAlgorithmUtilities:
         return score
 
 
-    def selection(self, population, n, fn): 
+    def selection(self, population, n, fn):
+
         new_population = {}
         fitness = {}
         for i in population:
@@ -68,6 +75,7 @@ class GeneticAlgorithmUtilities:
 
 
     def crossover1(self, p1, p2, start, end):
+
         temp = p1[start : end + 1]
         count = 0
         for i in p2:
@@ -81,17 +89,14 @@ class GeneticAlgorithmUtilities:
         genome = self.generate_genome(temp)
         return genome, temp
 
-    # Edge Recombination
-    def crossover2():
-        pass
-
 
     def mutation(self, index_list):
+    	
         a = random.randint(0, self.reads_n - 1)
         b = random.randint(0, self.reads_n - 1)
         index_list[a], index_list[b] = index_list[b], index_list[a]
         return index_list
 
+
 if __name__ == '__main__':
     pass
-

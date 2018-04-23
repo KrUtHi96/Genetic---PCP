@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import time
 import random
 
-from DNAHelper import helper_functions
+from dna_utils import helper_functions
 
 
 class ShinglesScore:

@@ -88,4 +88,4 @@ def test(a, b):
 
 if __name__ == "__main__":
     test("TCGCTTAAGTATGCTTTTAG", "GAACAAAACTCAATAAAATAGAACAAAACTCAATAAAATA")
-    test("paper", "coinpaper")
+    test("", "coinpaper")

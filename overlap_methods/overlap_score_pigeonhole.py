@@ -108,8 +108,11 @@ if __name__ == '__main__':
         'TTGGAACCTTTCACGGTCACCC'
     ]
 
+    for read in reads:
+        print(read)
+
     osp = OverlapScorePigeonhole(reads)
 
     matrix = osp.overlap_scores()
 
-    print(matrix)
+    print("\n", matrix)

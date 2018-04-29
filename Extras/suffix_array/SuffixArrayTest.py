@@ -1,5 +1,5 @@
-from DNAHelper.helper_functions import *
-from SuffixArray import SuffixArray
+from dna_utils.helper_functions import *
+from Extras.suffix_array import SuffixArray
 
 text = read_genome('../Dataset/phix.fa')
 suffix_array = SuffixArray(text)

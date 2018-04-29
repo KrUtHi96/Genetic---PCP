@@ -1,6 +1,6 @@
 import itertools
 
-from DNAHelper import helper_functions
+from dna_utils import helper_functions
 
 
 def pick_maximal_overlap(reads, k):

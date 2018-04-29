@@ -8,10 +8,10 @@ import genetic_algorithm_utilities
 
 def GeneticAlgorithm(size=100, generations=60, select_n=60, threshold=0.99):
     gd = generate_dataset.GenerateDataset(error_rate=0, mutation_rate=0)
-    genome = gd.random_genome(length=30000)
+    genome = gd.random_genome(length=3000)
 
-    reads = gd.random_reads(length=1000, num=5000)
-
+    reads = gd.random_reads(length=600, num=4000)
+    print("Getting overlap matrix")
     osp = overlap_score_pigeonhole.OverlapScorePigeonhole(reads, overlap_minimum=20, max_error=3)
     overlap_matrix = osp.overlap_scores()
 
@@ -40,7 +40,7 @@ def GeneticAlgorithm(size=100, generations=60, select_n=60, threshold=0.99):
                 print("Genome Found! in generation", count, score)
                 return i, score
 
-        population, fitness = gau.selection(population, select_n, gau.fitness_score1)
+        population, fitness = gau.selection(population, select_n, gau.fitness_score2)
 
         print("Selection done")
 
@@ -54,9 +54,9 @@ def GeneticAlgorithm(size=100, generations=60, select_n=60, threshold=0.99):
 
                 start = random.randint(1, len(a) - 2)
                 end = random.randint(start + 1, len(a))
-                #genome_new, index_list = gau.crossover1(a, b, start, end)
+                genome_new, index_list = gau.crossover1(a, b, start, end)
 
-                genome_new, index_list = gau.crossover_edge_recombination(a, b)
+                # genome_new, index_list = gau.crossover_edge_recombination(a, b)
                 if genome_new not in population:
                     population[genome_new] = index_list
 

@@ -1,5 +1,5 @@
-from DNAHelper.helper_functions import *
-from SuffixTree import SuffixTree
+from dna_utils.helper_functions import *
+from Extras.suffix_tree import SuffixTree
 
 alphabet = 'AGTCN'
 text = read_genome('../Dataset/phix.fa')

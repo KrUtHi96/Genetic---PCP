@@ -2,12 +2,12 @@ import matplotlib.pyplot as plt
 import time
 import random
 
-from DNAHelper import helper_functions
+from dna_utils import helper_functions
 
 
 class ShinglesScore:
 
-    def __init__(self, n=12):
+    def __init__(self, n=20):
 
         self.n = n
         self.score = 0
@@ -52,16 +52,18 @@ class ShinglesScore:
 
         plt.rcParams["figure.figsize"] = (10, 10)
 
+        print("DOne")
+
         plt.show()
 
 
 def main():
     genome = helper_functions.read_genome("../Dataset/lambda_virus.fa")
-    a, b = genome, genome
+    a, b = genome[:1000], genome[:1000]
 
-    for i in range(10000):
-        index = random.randint(0, len(b))
-        b = b[:index] + 'C' + b[index + 1:]
+    # for i in range(10000):
+    #     index = random.randint(0, len(b))
+    #     b = b[:index] + 'C' + b[index + 1:]
 
     print(len(a), len(b))
 

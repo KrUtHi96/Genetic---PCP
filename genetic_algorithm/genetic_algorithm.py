@@ -1,4 +1,5 @@
 import random
+from matplotlib import pyplot as plt
 
 from generate_dataset import generate_dataset
 from overlap_methods import overlap_score_pigeonhole
@@ -7,8 +8,15 @@ import genetic_algorithm_utilities
 
 
 def GeneticAlgorithm(size=100, generations=60, select_n=60, threshold=0.99):
+<<<<<<< HEAD
     gd = generate_dataset.GenerateDataset(error_rate=0, mutation_rate=0)
     genome = gd.random_genome(length=3000)
+=======
+    gd = generate_dataset.GenerateDataset(error_rate=0.2, mutation_rate=0.2)
+    genome = gd.random_genome(length=30000)
+
+    reads = gd.random_reads(length=1000, num=5000)
+>>>>>>> 33452e376bfc73b974894e128e91625290137ca3
 
     reads = gd.random_reads(length=600, num=4000)
     print("Getting overlap matrix")
@@ -21,10 +29,14 @@ def GeneticAlgorithm(size=100, generations=60, select_n=60, threshold=0.99):
 
     gau = genetic_algorithm_utilities.GeneticAlgorithmUtil(reads, overlap_matrix)
 
-    population = gau.initialize_pop(size, len(genome)) #Works..
-    #population = gau.initialize_population(size)
+    population = gau.initialize_pop(size, len(genome))  # Works..
+    # population = gau.initialize_population(size)
 
     max_so_far = {'genome': '', 'score': -10}
+
+    # Plotting Evaluation scores
+    xx = []
+    yy = []
 
     count = 1
     while count <= generations:
@@ -71,14 +83,25 @@ def GeneticAlgorithm(size=100, generations=60, select_n=60, threshold=0.99):
                 population[temp_gen] = temp
 
         print("Generation :", count, max_so_far['score'])
+
+        xx.append(count)
+        yy.append(max_so_far['score'])
+
         count += 1
 
         print("Population len", len(population))
+
+    plt.plot(xx, yy, '-', label='Evaluation Score')
+    plt.xlabel('Generations')
+    plt.ylabel('Evaluation Score')
+    plt.title('Score vs Generation Plot')
+    plt.legend()
+    plt.show()
 
     return max_so_far['genome'], max_so_far['score']
 
 
 if __name__ == '__main__':
-    reconstructed_genome, score = GeneticAlgorithm()
+    reconstructed_genome, score = GeneticAlgorithm(generations=15)
 
     print("Best Score :", score)

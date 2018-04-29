@@ -120,9 +120,16 @@ class GeneticAlgorithmUtil:
         length_2 = len(index_list_2)
 
         for i, idx in enumerate(index_list_1):
-            neighbours[idx] = {index_list_1[i - 1], index_list_1[(i + 1) % length_1]}
+            if idx not in neighbours:
+                neighbours[idx] = {}
+
+            neighbours[idx].add(index_list_1[i - 1])
+            neighbours[idx].add(index_list_1[(i + 1) % length_1])
 
         for i, idx in enumerate(index_list_2):
+            if idx not in neighbours:
+                neighbours[idx] = {}
+
             neighbours[idx].add(index_list_2[i - 1])
             neighbours[idx].add(index_list_2[(i + 1) % length_2])
 

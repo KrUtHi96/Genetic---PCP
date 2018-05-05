@@ -7,52 +7,42 @@ from evaluation_methods import shingles_score
 import genetic_algorithm_utilities
 
 
-def GeneticAlgorithm(size=100, generations=60, select_n=60, threshold=0.99):
-<<<<<<< HEAD
-    gd = generate_dataset.GenerateDataset(error_rate=0, mutation_rate=0)
-    genome = gd.random_genome(length=3000)
-=======
-    gd = generate_dataset.GenerateDataset(error_rate=0.2, mutation_rate=0.2)
-    genome = gd.random_genome(length=30000)
+def GeneticAlgorithm(size=100, generations=500, select_n=60):
 
-    reads = gd.random_reads(length=1000, num=5000)
->>>>>>> 33452e376bfc73b974894e128e91625290137ca3
+    reads = ["ac", "bc", "ab", "baabba"]
+    reads1 = ["x", "y", "ax", "yb"]
 
-    reads = gd.random_reads(length=600, num=4000)
-    print("Getting overlap matrix")
-    osp = overlap_score_pigeonhole.OverlapScorePigeonhole(reads, overlap_minimum=20, max_error=3)
-    overlap_matrix = osp.overlap_scores()
 
-    print("************matrix computed********************")
+    gau = genetic_algorithm_utilities.GeneticAlgorithmUtil(reads, reads1)
 
-    ss = shingles_score.ShinglesScore(n=12)
+    population = gau.initialize_population(size)
+    print("population is initialised...")
+    print(population)
 
-    gau = genetic_algorithm_utilities.GeneticAlgorithmUtil(reads, overlap_matrix)
-
-    population = gau.initialize_pop(size, len(genome))  # Works..
-    # population = gau.initialize_population(size)
-
-    max_so_far = {'genome': '', 'score': -10}
-
-    # Plotting Evaluation scores
-    xx = []
-    yy = []
+    max_so_far = {'genome': '', 'genome1':'', 'score': -10000}
 
     count = 1
     while count <= generations:
 
         for i in population:
-            # print("population",len(i),"original", len(genome))
-            score = ss.ng_score(i, genome)
+
+            score = gau.fitness_score(population[i])
+
+            index_list = population[i]
+            print(index_list)
+            genome1 = ''.join([reads1[j] for j in index_list])
+
+            print("genome1", genome1, population[i])
+
 
             if score > max_so_far['score']:
-                max_so_far['genome'], max_so_far['score'] = i, score
+                max_so_far['genome'], max_so_far['genome1'], max_so_far['score'] = i, genome1, score
                 print("Max Score so far :", max_so_far['score'])
-            if score >= threshold:
-                print("Genome Found! in generation", count, score)
-                return i, score
+            if i == genome1:
+                print("Success : ", i, population[i], genome1)
+                exit()
 
-        population, fitness = gau.selection(population, select_n, gau.fitness_score2)
+        population, fitness = gau.selection(population, select_n, gau.fitness_score)
 
         print("Selection done")
 
@@ -64,10 +54,12 @@ def GeneticAlgorithm(size=100, generations=60, select_n=60, threshold=0.99):
             if a != b:
                 # print("CHeck", a, b)
 
-                start = random.randint(1, len(a) - 2)
-                end = random.randint(start + 1, len(a))
-                genome_new, index_list = gau.crossover1(a, b, start, end)
-
+                # start = random.randint(1, len(a) - 2)
+                # end = random.randint(start + 1, len(a))
+                # genome_new, index_list = gau.crossover1(a, b, start, end)
+                point_of_crossover = random.randint(0, len(a))
+                index_list = a[:point_of_crossover] + b[point_of_crossover:]
+                genome_new = gau.generate_genome(index_list, 0)
                 # genome_new, index_list = gau.crossover_edge_recombination(a, b)
                 if genome_new not in population:
                     population[genome_new] = index_list
@@ -76,32 +68,22 @@ def GeneticAlgorithm(size=100, generations=60, select_n=60, threshold=0.99):
 
         # mutation
         for i in list(population.keys()):
-            temp = gau.mutation_pop(population[i])
-            temp_gen = gau.generate_genome(temp)
+            temp = gau.mutation(population[i])
+            temp_gen = gau.generate_genome(temp, 0)
             if temp_gen not in population:
                 population.pop(i)
                 population[temp_gen] = temp
 
-        print("Generation :", count, max_so_far['score'])
-
-        xx.append(count)
-        yy.append(max_so_far['score'])
+        print("Generation :", count,max_so_far['score'])
 
         count += 1
 
-        print("Population len", len(population))
-
-    plt.plot(xx, yy, '-', label='Evaluation Score')
-    plt.xlabel('Generations')
-    plt.ylabel('Evaluation Score')
-    plt.title('Score vs Generation Plot')
-    plt.legend()
-    plt.show()
+        # print("Population len", len(population))
 
     return max_so_far['genome'], max_so_far['score']
 
 
 if __name__ == '__main__':
-    reconstructed_genome, score = GeneticAlgorithm(generations=15)
+    reconstructed_genome, score = GeneticAlgorithm()
 
     print("Best Score :", score)

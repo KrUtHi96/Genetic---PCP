@@ -3,67 +3,109 @@ import random
 
 class GeneticAlgorithmUtil:
 
-    def __init__(self, reads, overlap_matrix):
+    def __init__(self, reads, reads1):
         self.reads = reads
-        self.overlap_matrix = overlap_matrix
-
+        self.reads1 = reads1
         self.reads_n = len(reads)
 
-    def add(self, i, j):
-        offset = int(self.overlap_matrix[i, j])
-        return self.reads[j][offset:]
+    # def add(self, i, j, choice):
+    #     if choice == 0:
+    #         return self.reads[i] + self.reads[j]
+    #     else:
+    #         return self.reads1[i] + self.reads1[j]
 
-    def generate_genome(self, index_list):
-        genome = self.reads[index_list[0]]
-        for i in range(1, len(index_list)):
-            genome += self.add(index_list[i - 1], index_list[i])
+    def generate_genome(self, index_list, choice):
+        if choice == 0:
+            genome = ''.join([self.reads[j] for j in index_list])
+        else:
+            genome = ''.join([self.reads1[j] for j in index_list])
+
+
         return genome
 
-    def initialize_population(self, size):
-        i = 0
-        population = {}
-        while i < size:
-            index_list = []
-            temp = list(range(self.reads_n))
-            while temp:
-                index = random.choice(temp)
-                temp.remove(index)
-                index_list.append(index)
-            genome = self.generate_genome(index_list)
-            if genome not in population:
-                population[genome] = index_list
-                i += 1
-        return population
+    # def initialize_population(self, size):
+    #     i = 0
+    #     population = {}
+    #     while i < size:
+    #         index_list = []
+    #         temp = list(range(self.reads_n))
+    #         while temp:
+    #             index = random.choice(temp)
+    #             temp.remove(index)
+    #             index_list.append(index)
+    #         genome = self.generate_genome(index_list)
+    #         if genome not in population:
+    #             population[genome] = index_list
+    #             i += 1
+    #     return population
 
-    def initialize_pop(self, size, gen_len):
+    # def initialize_pop(self, size, gen_len):
+    #     i = 0
+    #     population = dict()
+    #     while i < size:
+    #         genome = ''
+    #         index_list = []
+    #         temp = list(range(self.reads_n))
+    #         while len(genome) < gen_len:
+    #             index = random.choice(temp)
+    #             temp.remove(index)
+    #             index_list.append(index)
+    #             genome += self.reads[index]
+    #
+    #         if genome not in population:
+    #             population[genome] = index_list
+    #             i += 1
+    #     return population
+
+    def initialize_population(self, size):
+        import time
+        random.seed(time.time())
         i = 0
         population = dict()
         while i < size:
             genome = ''
             index_list = []
-            temp = list(range(self.reads_n))
-            while len(genome) < gen_len:
-                index = random.choice(temp)
-                temp.remove(index)
+            genome_len = random.randint(1, 10)
+            while len(genome) < genome_len:
+                index = random.choice(list(range(len(self.reads))))
                 index_list.append(index)
                 genome += self.reads[index]
 
             if genome not in population:
+                print(genome)
                 population[genome] = index_list
                 i += 1
         return population
 
-    def fitness_score1(self, index_list):
-        score = 0
-        for i in range(len(index_list) - 1):
-            score += self.overlap_matrix[index_list[i], index_list[i + 1]]
-        return score
+    # def fitness_score1(self, index_list):
+    #     score = 0
+    #     for i in range(len(index_list) - 1):
+    #         score += self.overlap_matrix[index_list[i], index_list[i + 1]]
+    #     return score
+    #
+    # def fitness_score2(self, index_list):
+    #     score = 0
+    #     for i in range(len(index_list) - 1):
+    #         for j in range(len(index_list) - 1):
+    #             score = score + (abs(i - j) * self.overlap_matrix[index_list[i], index_list[j]])
+    #     return score
 
-    def fitness_score2(self, index_list):
-        score = 0
-        for i in range(len(index_list) - 1):
-            for j in range(len(index_list) - 1):
-                score = score + (abs(i - j) * self.overlap_matrix[index_list[i], index_list[j]])
+    def fitness_score(self, index_list):
+
+        genome = self.generate_genome(index_list, 0)
+        genome1 = self.generate_genome(index_list, 1)
+
+        # print(genome, genome1)
+
+        length = len(genome)
+        length1 = len(genome1)
+
+        # print(length, length1)
+
+        score = 0 - abs(len(genome) - len(genome1))
+        for i in range(min(length, length1)):
+            if genome[i] == genome1[i]:
+                score += 1
         return score
 
     def selection(self, population, n, fn):
@@ -72,7 +114,7 @@ class GeneticAlgorithmUtil:
         for i in population:
             fitness[i] = fn(population[i])
         ordered = sorted(fitness.items(), key=lambda x: x[1], reverse=True)
-        print("ordered", len(ordered))
+        # print("ordered", len(ordered))
         for i in range(n):
             genome = ordered[i][0]
             new_population[genome] = population[genome]
@@ -88,13 +130,16 @@ class GeneticAlgorithmUtil:
                 else:
                     temp = temp + [i]
                 count += 1
-        temp = self.mutation_pop(temp)
-        genome = self.generate_genome(temp)
+        # temp = self.mutation_pop(temp)
+        genome = self.generate_genome(temp, 0)
         return genome, temp
 
     def mutation(self, index_list):
         t = len(index_list)
+        import time
+        random.seed(time.time())
         a = random.randint(0, t - 1)
+        # random.seed(time.time())
         b = random.randint(0, t - 1)
         index_list[a], index_list[b] = index_list[b], index_list[a]
 
@@ -174,5 +219,14 @@ class GeneticAlgorithmUtil:
 
 
 if __name__ == '__main__':
-    u = GeneticAlgorithmUtil(['aaaaa', 'abbadbvad'], [[1, 2], [3, 4]])
-    u.crossover_edge_recombination([1, 2, 3, 4, 5], [3, 4, 1, 2, 5])
+    reads = ["ab", "ba", "aaa", "bbb"]
+    reads1 = ["abb", "aaa", "ab", "bb"]
+    u = GeneticAlgorithmUtil(reads, reads1)
+    # print(u.add(0,1,1))
+    print(u.generate_genome([3,3], 0))
+    print(u.generate_genome([3,3], 1))
+    print(u.initialize_population(2))
+    print(u.fitness_score([1,0,1,1,1]))
+    print(u.crossover1([1,0,1,1,0,0], [1,0,1,1,1,1], 2, 4))
+    print(u.mutation([1,0,1,1,1,1]))
+    print("done")
